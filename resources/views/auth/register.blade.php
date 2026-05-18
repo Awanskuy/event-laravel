@@ -1,47 +1,62 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm mt-4">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4">Register Account</h3>
-                <form action="{{ route('register') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label>Full Name</label>
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label>Email Address</label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
-                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label>Register As</label>
-                        <select name="role" class="form-select @error('role') is-invalid @enderror">
-                            <option value="user">Participant (User)</option>
-                            <option value="organizer">Event Organizer</option>
-                        </select>
-                        @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
-                        @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label>Confirm Password</label>
-                        <input type="password" name="password_confirmation" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
-                <div class="text-center mt-3">
-                    <p>Already have an account? <a href="{{ route('login') }}">Login here</a></p>
-                </div>
+<!-- Main Registration Content -->
+<main class="flex-grow flex items-center justify-center px-margin-mobile py-stack-lg md:py-20 relative">
+    <div class="w-full max-w-[480px] bg-surface-container-low border-2 border-on-surface shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-stack-lg md:p-12 relative overflow-hidden">
+        <!-- Graphic Accents -->
+        <div class="absolute -top-4 -right-4 w-12 h-12 bg-secondary-container border-2 border-on-surface rotate-12"></div>
+        
+        <div class="space-y-stack-lg">
+            <header class="text-center space-y-unit">
+                <h1 class="font-headline-lg text-headline-lg uppercase tracking-tight">Join the Beat</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Create your account to unlock exclusive access.</p>
+            </header>
+            
+            <!-- Social Login -->
+            <button type="button" class="w-full flex items-center justify-center gap-stack-sm bg-surface-container-lowest border-2 border-on-surface py-stack-md font-label-md text-label-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
+                <span class="material-symbols-outlined">account_circle</span>
+                SIGN UP WITH GOOGLE
+            </button>
+            
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t-2 border-outline-variant"></div>
+                <span class="flex-shrink mx-4 font-label-sm text-label-sm text-on-surface-variant">OR EMAIL</span>
+                <div class="flex-grow border-t-2 border-outline-variant"></div>
             </div>
+            
+            <!-- Registration Form -->
+            <form action="{{ route('register') }}" method="POST" class="space-y-stack-md">
+                @csrf
+                <div class="space-y-unit">
+                    <label class="font-label-md text-label-md block">FULL NAME</label>
+                    <input name="name" class="w-full border-2 border-on-surface bg-surface-bright px-stack-md py-stack-md font-body-md text-body-md focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-outline-variant" placeholder="John Doe" type="text" required autofocus/>
+                </div>
+                <div class="space-y-unit">
+                    <label class="font-label-md text-label-md block">EMAIL ADDRESS</label>
+                    <input name="email" class="w-full border-2 border-on-surface bg-surface-bright px-stack-md py-stack-md font-body-md text-body-md focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-outline-variant" placeholder="john@example.com" type="email" required/>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                    <div class="space-y-unit">
+                        <label class="font-label-md text-label-md block">PASSWORD</label>
+                        <input name="password" class="w-full border-2 border-on-surface bg-surface-bright px-stack-md py-stack-md font-body-md text-body-md focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-outline-variant" placeholder="••••••••" type="password" required/>
+                    </div>
+                    <div class="space-y-unit">
+                        <label class="font-label-md text-label-md block">CONFIRM</label>
+                        <input name="password_confirmation" class="w-full border-2 border-on-surface bg-surface-bright px-stack-md py-stack-md font-body-md text-body-md focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-outline-variant" placeholder="••••••••" type="password" required/>
+                    </div>
+                </div>
+                <div class="pt-stack-md">
+                    <button class="w-full bg-primary-container text-on-primary-container border-2 border-on-surface py-stack-lg font-headline-md text-headline-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none uppercase" type="submit">
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+            
+            <footer class="text-center">
+                <p class="font-body-md text-body-md">Already have an account? <a class="font-label-md text-label-md text-primary underline" href="{{ route('login') }}">SIGN IN</a></p>
+            </footer>
         </div>
     </div>
-</div>
+</main>
 @endsection

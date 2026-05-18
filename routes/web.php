@@ -10,39 +10,120 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TicketValidationController;
 
-// Public routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show.public');
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES
+|--------------------------------------------------------------------------
+*/
 
-// Auth routes
+// Landing Page (Neubrutalist UI)
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Public Event Detail
+Route::get('/events/{event}', [EventController::class, 'show'])
+    ->name('events.show.public');
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('guest')->group(function () {
+
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATED USERS
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // User / Ticket Bookings routes
-    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
-    Route::post('/events/{event}/book', [TicketController::class, 'store'])->name('tickets.store');
-    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
+    /*
+    |--------------------------------------------------------------------------
+    | USER TICKETS
+    |--------------------------------------------------------------------------
+    */
 
-    // Simulate Payment
-    Route::post('/transactions/{transaction}/pay', [TransactionController::class, 'pay'])->name('transactions.pay');
+    Route::get('/tickets', [TicketController::class, 'index'])
+        ->name('tickets.index');
 
-    // Organizer routes
+    Route::post('/events/{event}/book', [TicketController::class, 'store'])
+        ->name('tickets.store');
+
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])
+        ->name('tickets.show');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAYMENT SIMULATION
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/checkout/{transaction}', [TransactionController::class, 'checkout'])
+        ->name('checkout');
+
+    Route::post('/transactions/{transaction}/pay',
+        [TransactionController::class, 'pay']
+    )->name('transactions.pay');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ORGANIZER ROUTES
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('role:organizer')->group(function () {
-        Route::resource('events', EventController::class)->except(['show']);
+
+        // Organizer Dashboard (My Events)
+        Route::get('/organizer/events',
+            [EventController::class, 'manage']
+        )->name('events.manage');
+
+        // CRUD Event Organizer
+        Route::resource('events', EventController::class)
+            ->except(['index', 'show']);
     });
 
-    // Admin routes
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/tickets/validate', [TicketValidationController::class, 'index'])->name('tickets.validate');
-        Route::post('/tickets/validate', [TicketValidationController::class, 'validateTicket'])->name('tickets.validate.post');
-    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN ROUTES
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:admin')
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+
+            Route::get('/dashboard',
+                [DashboardController::class, 'index']
+            )->name('dashboard');
+
+            Route::get('/users',
+                [UserController::class, 'index']
+            )->name('users.index');
+
+            Route::get('/tickets/validate',
+                [TicketValidationController::class, 'index']
+            )->name('tickets.validate');
+
+            Route::post('/tickets/validate',
+                [TicketValidationController::class, 'validateTicket']
+            )->name('tickets.validate.post');
+        });
 });

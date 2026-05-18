@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
+    public function checkout(Transaction $transaction)
+    {
+        if ($transaction->ticket->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('checkout.index', compact('transaction'));
+    }
+
     public function pay(Transaction $transaction)
     {
         if ($transaction->ticket->user_id !== Auth::id()) {

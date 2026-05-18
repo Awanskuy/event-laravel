@@ -40,9 +40,10 @@ class TicketController extends Controller
 
         if ($event->price == 0) {
             $ticket->update(['status' => 'active']);
+            return redirect()->route('tickets.show', $ticket)->with('success', 'Ticket booked successfully.');
         }
 
-        return redirect()->route('tickets.show', $ticket)->with('success', 'Ticket booked successfully.');
+        return redirect()->route('checkout', $ticket->transaction)->with('success', 'Please complete your payment.');
     }
 
     public function show(Ticket $ticket)
