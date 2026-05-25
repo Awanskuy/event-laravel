@@ -48,6 +48,11 @@ class DashboardController extends Controller
         $organizerCount = User::where('role', 'organizer')->count();
         $adminCount = User::where('role', 'admin')->count();
 
+        // 5 newest registered users
+        $latestUsers = User::latest()
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalEvents',
@@ -60,7 +65,8 @@ class DashboardController extends Controller
             'activeTickets',
             'usedTickets',
             'organizerCount',
-            'adminCount'
+            'adminCount',
+            'latestUsers'
         ));
     }
 }

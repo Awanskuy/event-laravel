@@ -151,19 +151,22 @@
             {{ config('app.name', 'KARCIS') }}
         </a>
 
-        <div class="hidden md:flex flex-1 max-w-md mx-gutter">
+        <form method="GET" action="{{ route('home') }}" class="hidden md:flex flex-1 max-w-md mx-gutter">
             <div class="relative w-full">
                 <input
-                    class="w-full bg-surface-container-low border-2 border-on-surface py-2 px-4 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] outline-none transition-all font-label-md"
-                    placeholder="Search events..."
+                    name="search"
+                    value="{{ request('search') }}"
+                    class="w-full bg-surface-container-low border-2 border-on-surface py-2 px-4 pr-10 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] outline-none transition-all font-label-md"
+                    placeholder="Cari event..."
                     type="text"
                 />
 
-                <span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant">
+                <button type="submit" aria-label="Cari event"
+                        class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
                     search
-                </span>
+                </button>
             </div>
-        </div>
+        </form>
 
         <nav class="flex items-center gap-stack-md">
 
@@ -171,15 +174,22 @@
                 <a class="hidden md:block font-label-md text-on-surface-variant hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                    style="text-decoration:none;"
                    href="{{ route('login') }}">
-                    Login
+                    Masuk
                 </a>
 
                 <a class="hidden md:block font-label-md text-on-surface-variant hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                    style="text-decoration:none;"
                    href="{{ route('register') }}">
-                    Register
+                    Daftar
                 </a>
             @else
+
+                <a class="hidden md:flex items-center gap-1 font-label-md text-on-surface-variant hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                   style="text-decoration:none;"
+                   href="{{ route('home') }}">
+                    <span class="material-symbols-outlined text-[18px]">home</span>
+                    Beranda
+                </a>
 
                 @if(Auth::user()->isAdmin())
                     <a class="hidden md:block font-label-md text-on-surface-variant hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
@@ -189,21 +199,21 @@
                     </a>
                 @endif
 
-                @if(Auth::user()->isOrganizer() && Route::has('events.index'))
+                @if(Auth::user()->isOrganizer())
                     <a class="hidden md:block font-label-md text-on-surface-variant hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                        style="text-decoration:none;"
-                       href="{{ route('events.index') }}">
-                        My Events
+                       href="{{ route('events.manage') }}">
+                        Event Saya
                     </a>
                 @endif
 
                 <a class="hidden md:block font-label-md text-on-surface-variant hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                    style="text-decoration:none;"
                    href="{{ route('tickets.index') }}">
-                    Tickets
+                    Tiket Saya
                 </a>
 
-                <form action="{{ route('logout') }}" method="POST">
+                <form action="{{ route('logout') }}" method="POST" class="hidden md:block">
                     @csrf
 
                     <button type="submit"
@@ -216,8 +226,43 @@
                 </form>
 
             @endguest
+
+            {{-- Mobile hamburger --}}
+            <button type="button"
+                    class="md:hidden p-2 border-2 border-on-surface bg-primary-container shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:scale-95 transition-all"
+                    aria-label="Menu" aria-expanded="false"
+                    onclick="const m=document.getElementById('mobile-menu'); m.classList.toggle('hidden'); this.setAttribute('aria-expanded', !m.classList.contains('hidden'));">
+                <span class="material-symbols-outlined block">menu</span>
+            </button>
         </nav>
     </header>
+
+    {{-- Mobile menu panel --}}
+    <div id="mobile-menu" class="hidden md:hidden bg-background border-b-2 border-on-surface shadow-[0px_4px_0px_0px_rgba(0,0,0,1)] px-margin-mobile py-stack-sm flex flex-col gap-2">
+        <form method="GET" action="{{ route('home') }}" class="relative mb-1">
+            <input name="search" value="{{ request('search') }}" placeholder="Cari event..." type="text"
+                   class="w-full bg-surface-container-low border-2 border-on-surface py-2 px-4 pr-10 outline-none font-label-md"/>
+            <button type="submit" aria-label="Cari event"
+                    class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant cursor-pointer">search</button>
+        </form>
+        @guest
+            <a href="{{ route('login') }}" class="block font-label-md uppercase text-on-surface border-2 border-on-surface bg-surface px-4 py-2 hover:bg-surface-container-high transition-all" style="text-decoration:none;">Masuk</a>
+            <a href="{{ route('register') }}" class="block font-label-md uppercase text-on-surface border-2 border-on-surface bg-surface px-4 py-2 hover:bg-surface-container-high transition-all" style="text-decoration:none;">Daftar</a>
+        @else
+            <a href="{{ route('home') }}" class="block font-label-md uppercase text-on-surface border-2 border-on-surface bg-surface px-4 py-2 hover:bg-surface-container-high transition-all" style="text-decoration:none;">Beranda</a>
+            @if(Auth::user()->isAdmin())
+                <a href="{{ route('admin.dashboard') }}" class="block font-label-md uppercase text-on-surface border-2 border-on-surface bg-surface px-4 py-2 hover:bg-surface-container-high transition-all" style="text-decoration:none;">Admin</a>
+            @endif
+            @if(Auth::user()->isOrganizer())
+                <a href="{{ route('events.manage') }}" class="block font-label-md uppercase text-on-surface border-2 border-on-surface bg-surface px-4 py-2 hover:bg-surface-container-high transition-all" style="text-decoration:none;">Event Saya</a>
+            @endif
+            <a href="{{ route('tickets.index') }}" class="block font-label-md uppercase text-on-surface border-2 border-on-surface bg-surface px-4 py-2 hover:bg-surface-container-high transition-all" style="text-decoration:none;">Tiket Saya</a>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full text-left font-label-md uppercase text-on-primary border-2 border-on-surface bg-primary px-4 py-2 hover:translate-x-[1px] hover:translate-y-[1px] transition-all">Keluar</button>
+            </form>
+        @endguest
+    </div>
 
     {{-- Alerts --}}
     @if(session('success'))
@@ -239,59 +284,6 @@
     {{-- Content --}}
     @yield('content')
 
-    {{-- Mobile Navbar --}}
-    <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 bg-background border-t-2 border-on-surface shadow-[0px_-4px_0px_0px_rgba(0,0,0,1)]">
-
-        <a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container border-2 border-on-surface px-4 py-1 rounded-lg"
-           style="text-decoration:none;"
-           href="{{ url('/') }}">
-            <span class="material-symbols-outlined">search</span>
-            <span class="font-label-sm">Explore</span>
-        </a>
-
-        <a class="flex flex-col items-center justify-center text-on-surface-variant"
-           style="text-decoration:none;"
-           href="{{ route('tickets.index') }}">
-            <span class="material-symbols-outlined">local_activity</span>
-            <span class="font-label-sm">Tickets</span>
-        </a>
-
-        @auth
-
-            @if(auth()->user()->isOrganizer() && Route::has('events.index'))
-                <a class="flex flex-col items-center justify-center text-on-surface-variant"
-                   style="text-decoration:none;"
-                   href="{{ route('events.index') }}">
-
-                    <span class="material-symbols-outlined">event</span>
-                    <span class="font-label-sm">Events</span>
-                </a>
-            @endif
-
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-
-                <button type="submit"
-                        class="flex flex-col items-center justify-center border-0 bg-transparent text-on-surface-variant">
-
-                    <span class="material-symbols-outlined">logout</span>
-                    <span class="font-label-sm">Logout</span>
-                </button>
-            </form>
-
-        @else
-
-            <a class="flex flex-col items-center justify-center text-on-surface-variant"
-               style="text-decoration:none;"
-               href="{{ route('login') }}">
-
-                <span class="material-symbols-outlined">login</span>
-                <span class="font-label-sm">Login</span>
-            </a>
-
-        @endauth
-    </nav>
-
     {{-- Footer --}}
     <footer class="hidden md:block mt-stack-lg border-t-2 border-on-surface bg-surface-container p-margin-desktop">
 
@@ -303,19 +295,19 @@
                 </div>
 
                 <p class="font-body-md text-on-surface-variant max-w-sm">
-                    The world's first neubrutalist ticketing platform built for discovery.
+                    Platform tiket neubrutalist pertama untuk menemukan event terbaik.
                 </p>
             </div>
 
             <div class="flex flex-col gap-2">
                 <span class="font-label-md text-primary uppercase">Platform</span>
-                <a class="text-on-surface" href="#">Browse Music</a>
-                <a class="text-on-surface" href="#">Tech Events</a>
-                <a class="text-on-surface" href="#">Listings</a>
+                <a class="text-on-surface" href="#">Jelajah Musik</a>
+                <a class="text-on-surface" href="#">Event Teknologi</a>
+                <a class="text-on-surface" href="#">Daftar Event</a>
             </div>
 
             <div class="flex flex-col gap-2">
-                <span class="font-label-md text-primary uppercase">Social</span>
+                <span class="font-label-md text-primary uppercase">Sosial</span>
                 <a class="text-on-surface" href="#">Instagram</a>
                 <a class="text-on-surface" href="#">Twitter / X</a>
                 <a class="text-on-surface" href="#">Discord</a>
@@ -330,14 +322,12 @@
             </p>
 
             <div class="flex gap-stack-md">
-                <a class="font-label-sm opacity-60 text-on-surface" href="#">Privacy</a>
-                <a class="font-label-sm opacity-60 text-on-surface" href="#">Terms</a>
+                <a class="font-label-sm opacity-60 text-on-surface" href="#">Privasi</a>
+                <a class="font-label-sm opacity-60 text-on-surface" href="#">Ketentuan</a>
             </div>
 
         </div>
     </footer>
-
-    <div class="h-20 md:hidden"></div>
 
     @stack('scripts')
 

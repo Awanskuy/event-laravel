@@ -20,7 +20,10 @@ use App\Http\Controllers\Admin\TicketValidationController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Public Event Detail
+// Constrain {event} to digits so it doesn't shadow /events/create
+// (the resource route) which is registered later in the auth group.
 Route::get('/events/{event}', [EventController::class, 'show'])
+    ->whereNumber('event')
     ->name('events.show.public');
 
 
@@ -33,7 +36,7 @@ Route::get('/events/{event}', [EventController::class, 'show'])
 Route::middleware('guest')->group(function () {
 
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);

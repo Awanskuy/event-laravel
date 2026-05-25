@@ -41,9 +41,9 @@
     <!-- Header & Filter -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-lg mb-stack-lg">
         <div>
-            <h1 class="font-display-lg text-3xl md:text-5xl font-black uppercase mb-2">My Tickets</h1>
+            <h1 class="font-display-lg text-3xl md:text-5xl font-black uppercase mb-2">Tiket Saya</h1>
             <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
-                Manage your upcoming experiences and revisit your favorite past events in one place.
+                Kelola event yang akan datang dan lihat kembali event favoritmu yang sudah lewat di satu tempat.
             </p>
         </div>
         
@@ -52,11 +52,11 @@
             <div class="flex border-2 border-on-surface bg-surface-container-low p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] self-start md:self-auto shrink-0">
                 <button id="tab-upcoming" onclick="switchTab('upcoming')" 
                         class="px-6 py-2 font-label-md transition-all uppercase tab-active">
-                    Upcoming
+                    Akan Datang
                 </button>
-                <button id="tab-past" onclick="switchTab('past')" 
+                <button id="tab-past" onclick="switchTab('past')"
                         class="px-6 py-2 font-label-md transition-all uppercase tab-inactive hover:bg-surface-variant">
-                    Past Events
+                    Sudah Lewat
                 </button>
             </div>
         @endif
@@ -68,13 +68,13 @@
             <div class="w-20 h-20 bg-tertiary-fixed text-on-tertiary-fixed border-2 border-on-surface neubrutal-shadow rounded-full flex items-center justify-center mx-auto mb-stack-md">
                 <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">sentiment_dissatisfied</span>
             </div>
-            <h2 class="font-headline-lg text-headline-lg uppercase mb-stack-sm tracking-tight">NO TICKETS FOUND!</h2>
+            <h2 class="font-headline-lg text-headline-lg uppercase mb-stack-sm tracking-tight">BELUM ADA TIKET!</h2>
             <p class="font-body-lg text-on-surface-variant max-w-md mx-auto mb-stack-lg">
-                You haven't booked any experiences yet. Your next amazing adventure is just a click away!
+                Kamu belum memesan event apa pun. Petualangan seru berikutnya cuma sejauh satu klik!
             </p>
-            <a href="{{ route('home') }}" 
+            <a href="{{ route('home') }}"
                class="inline-block bg-primary text-on-primary font-headline-md px-8 py-4 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all uppercase italic text-decoration-none">
-                BROWSE EVENTS NOW
+                JELAJAHI EVENT
             </a>
         </section>
     @else
@@ -84,15 +84,15 @@
             <div class="flex items-center gap-stack-md mb-stack-md">
                 <div class="h-[2px] flex-grow bg-on-surface"></div>
                 <h2 class="font-headline-md text-headline-md uppercase px-4 border-2 border-on-surface bg-tertiary-fixed shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                    Upcoming Events
+                    Event Akan Datang
                 </h2>
                 <div class="h-[2px] flex-grow bg-on-surface"></div>
             </div>
 
             @if($upcomingTickets->isEmpty())
                 <div class="border-2 border-dashed border-on-surface bg-surface-container p-stack-lg text-center">
-                    <p class="font-headline-md text-on-surface-variant uppercase">No upcoming events booked.</p>
-                    <a href="{{ route('home') }}" class="text-primary font-label-md underline mt-2 block">Find events to join</a>
+                    <p class="font-headline-md text-on-surface-variant uppercase">Belum ada event yang dipesan.</p>
+                    <a href="{{ route('home') }}" class="text-primary font-label-md underline mt-2 block">Cari event untuk diikuti</a>
                 </div>
             @else
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
@@ -100,21 +100,21 @@
                         @php
                             // Parse Event Category Tag
                             $titleUpper = strtoupper($ticket->event->title);
-                            $category = 'LIVE EVENT';
-                            if (str_contains($titleUpper, 'FESTIVAL')) $category = 'MUSIC FEST';
-                            elseif (str_contains($titleUpper, 'CONCERT')) $category = 'CONCERT';
-                            elseif (str_contains($titleUpper, 'PARTY')) $category = 'PARTY';
-                            elseif (str_contains($titleUpper, 'CONFERENCE')) $category = 'TECH CONF';
-                            
+                            $category = 'EVENT';
+                            if (str_contains($titleUpper, 'FESTIVAL')) $category = 'FESTIVAL';
+                            elseif (str_contains($titleUpper, 'CONCERT')) $category = 'KONSER';
+                            elseif (str_contains($titleUpper, 'PARTY')) $category = 'PESTA';
+                            elseif (str_contains($titleUpper, 'CONFERENCE')) $category = 'KONFERENSI';
+
                             // Map Status Badges
                             $badgeClass = 'bg-primary-fixed text-on-primary-fixed';
-                            $statusLabel = 'ACTIVE';
+                            $statusLabel = 'AKTIF';
                             if ($ticket->status === 'pending') {
                                 $badgeClass = 'bg-tertiary-fixed text-on-tertiary-fixed';
-                                $statusLabel = 'PENDING';
+                                $statusLabel = 'MENUNGGU';
                             } elseif ($ticket->status === 'used') {
                                 $badgeClass = 'bg-surface-variant text-on-surface-variant';
-                                $statusLabel = 'USED';
+                                $statusLabel = 'TERPAKAI';
                             }
                         @endphp
                         
@@ -124,7 +124,7 @@
                             <div class="w-full md:w-48 h-48 md:h-full shrink-0 relative border-b-2 md:border-b-0 md:border-r-2 border-on-surface overflow-hidden">
                                 <img alt="{{ $ticket->event->title }}" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                                     src="{{ $ticket->event->image ? asset('storage/' . $ticket->event->image) : 'https://placehold.co/600x400/56642b/ffffff?text=' . urlencode($ticket->event->title) }}"/>
+                                     src="{{ $ticket->event->image_url }}"/>
                                 <div class="absolute top-2 left-2 bg-secondary-container text-on-secondary-container font-label-sm px-2 py-0.5 border-2 border-on-surface shadow-sm">
                                     {{ $category }}
                                 </div>
@@ -157,13 +157,13 @@
                                 <div class="flex gap-stack-md mt-stack-lg items-center">
                                     <a href="{{ route('tickets.show', $ticket) }}" 
                                        class="flex-grow text-center bg-primary-container text-on-primary-container font-label-md py-3 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase decoration-none block">
-                                        View Ticket
+                                        Lihat Tiket
                                     </a>
                                     
                                     @if($ticket->status === 'pending' && $ticket->transaction)
                                         <a href="{{ route('checkout', $ticket->transaction) }}" 
                                            class="bg-tertiary-container text-on-tertiary-container font-label-md py-3 px-4 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase decoration-none block">
-                                            Pay Now
+                                            Bayar Sekarang
                                         </a>
                                     @else
                                         <button onclick="window.print()" 
@@ -184,14 +184,14 @@
             <div class="flex items-center gap-stack-md mb-stack-md">
                 <div class="h-[2px] flex-grow bg-on-surface/20"></div>
                 <h2 class="font-headline-md text-headline-md uppercase px-4 border-2 border-on-surface bg-surface-variant shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                    Past Events
+                    Event Sudah Lewat
                 </h2>
                 <div class="h-[2px] flex-grow bg-on-surface/20"></div>
             </div>
 
             @if($pastTickets->isEmpty())
                 <div class="border-2 border-dashed border-on-surface bg-surface-container p-stack-lg text-center opacity-75">
-                    <p class="font-headline-md text-on-surface-variant uppercase">No past event history found.</p>
+                    <p class="font-headline-md text-on-surface-variant uppercase">Belum ada riwayat event yang sudah lewat.</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter opacity-90 transition-all duration-300">
@@ -201,9 +201,9 @@
                             <div class="h-32 w-full border-b-2 border-on-surface relative overflow-hidden">
                                 <img alt="{{ $ticket->event->title }}" 
                                      class="w-full h-full object-cover grayscale opacity-75 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" 
-                                     src="{{ $ticket->event->image ? asset('storage/' . $ticket->event->image) : 'https://placehold.co/600x400/56642b/ffffff?text=' . urlencode($ticket->event->title) }}"/>
+                                     src="{{ $ticket->event->image_url }}"/>
                                 <div class="absolute top-2 right-2 bg-on-surface text-white px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider">
-                                    PAST
+                                    LEWAT
                                 </div>
                             </div>
                             <div class="p-stack-md flex-grow flex flex-col justify-between">
@@ -217,7 +217,7 @@
                                 </div>
                                 <a href="{{ route('tickets.show', $ticket) }}" 
                                    class="w-full text-center font-label-md py-2 border-2 border-on-surface bg-surface-variant hover:bg-surface-container-highest transition-colors decoration-none text-inherit block">
-                                    Order Details
+                                    Detail Pesanan
                                 </a>
                             </div>
                         </div>

@@ -24,20 +24,20 @@
 @section('content')
 
 @php
-    $ticketsCount = $event->tickets->count();
+    $ticketsCount = $event->tickets()->count();
     $remaining = max(0, $event->quota - $ticketsCount);
     $percentage = $event->quota > 0 ? ($remaining / $event->quota) * 100 : 0;
     
     // Dynamic category tag based on title
     $titleUpper = strtoupper($event->title);
-    $categoryTag = 'LIVE EVENT';
+    $categoryTag = 'EVENT';
     if (str_contains($titleUpper, 'FESTIVAL')) $categoryTag = 'FESTIVAL';
-    elseif (str_contains($titleUpper, 'CONCERT')) $categoryTag = 'CONCERT';
-    elseif (str_contains($titleUpper, 'PARTY')) $categoryTag = 'PARTY';
-    elseif (str_contains($titleUpper, 'CONFERENCE')) $categoryTag = 'CONFERENCE';
+    elseif (str_contains($titleUpper, 'CONCERT')) $categoryTag = 'KONSER';
+    elseif (str_contains($titleUpper, 'PARTY')) $categoryTag = 'PESTA';
+    elseif (str_contains($titleUpper, 'CONFERENCE')) $categoryTag = 'KONFERENSI';
     elseif (str_contains($titleUpper, 'MEETUP')) $categoryTag = 'MEETUP';
     elseif (str_contains($titleUpper, 'WORKSHOP')) $categoryTag = 'WORKSHOP';
-    elseif (str_contains($titleUpper, 'EXPO')) $categoryTag = 'EXHIBITION';
+    elseif (str_contains($titleUpper, 'EXPO')) $categoryTag = 'PAMERAN';
 @endphp
 
 <main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col md:flex-row gap-gutter relative">
@@ -49,8 +49,8 @@
         <section class="border-2 border-on-surface neubrutal-shadow bg-white overflow-hidden">
             <div class="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden border-b-2 border-on-surface relative group">
                 <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                     alt="{{ $event->title }}" 
-                     src="{{ $event->image ? asset('storage/' . $event->image) : 'https://placehold.co/1200x600/56642b/ffffff?text=' . urlencode($event->title) }}"/>
+                     alt="{{ $event->title }}"
+                     src="{{ $event->image_url }}"/>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
             </div>
             
@@ -62,15 +62,15 @@
                     </span>
                     @if($remaining <= 0)
                         <span class="bg-error-container text-on-error-container font-label-md text-label-sm px-3 py-1 border-2 border-on-surface">
-                            SOLD OUT
+                            HABIS
                         </span>
                     @elseif($percentage <= 15)
                         <span class="bg-secondary-container text-on-secondary-container font-label-md text-label-sm px-3 py-1 border-2 border-on-surface animate-pulse">
-                            LAST FEW SEATS
+                            SISA SEDIKIT
                         </span>
                     @else
                         <span class="bg-primary-fixed text-on-primary-fixed font-label-md text-label-sm px-3 py-1 border-2 border-on-surface">
-                            SELLING FAST
+                            CEPAT HABIS
                         </span>
                     @endif
                 </div>
@@ -101,7 +101,7 @@
         <section class="border-2 border-on-surface neubrutal-shadow bg-surface-container p-stack-md md:p-stack-lg">
             <h2 class="font-headline-md text-headline-md mb-stack-md flex items-center gap-2 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span> 
-                ABOUT THE EVENT
+                TENTANG EVENT
             </h2>
             <div class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-line">
                 {{ $event->description }}
@@ -112,7 +112,7 @@
         <section class="border-2 border-on-surface neubrutal-shadow bg-white p-stack-md md:p-stack-lg">
             <h2 class="font-headline-md text-headline-md mb-stack-lg flex items-center gap-2 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">timeline</span> 
-                EVENT SCHEDULE
+                JADWAL ACARA
             </h2>
             <div class="space-y-6 relative border-l-2 border-on-surface ml-4 pl-6">
                 <!-- Timeline Dot 1 -->
@@ -124,9 +124,9 @@
                         <span class="bg-primary text-on-primary font-mono text-xs px-2 py-0.5 border-2 border-on-surface shadow-sm w-fit shrink-0">
                             {{ $event->date->copy()->subHour()->format('H:i') }} WIB
                         </span>
-                        <h4 class="font-headline-md text-[16px] uppercase leading-tight text-on-surface">DOORS OPEN &amp; CHECK-IN</h4>
+                        <h4 class="font-headline-md text-[16px] uppercase leading-tight text-on-surface">PINTU DIBUKA &amp; CHECK-IN</h4>
                     </div>
-                    <p class="text-sm text-on-surface-variant">Arrive early to scan your digital KARCIS ticket and secure a great spot.</p>
+                    <p class="text-sm text-on-surface-variant">Datang lebih awal untuk memindai tiket KARCIS digitalmu dan dapatkan tempat terbaik.</p>
                 </div>
 
                 <!-- Timeline Dot 2 -->
@@ -138,9 +138,9 @@
                         <span class="bg-secondary text-on-secondary font-mono text-xs px-2 py-0.5 border-2 border-on-surface shadow-sm w-fit shrink-0">
                             {{ $event->date->format('H:i') }} WIB
                         </span>
-                        <h4 class="font-headline-md text-[16px] uppercase leading-tight text-on-surface">OPENING REMARKS &amp; HOST GREETING</h4>
+                        <h4 class="font-headline-md text-[16px] uppercase leading-tight text-on-surface">PEMBUKAAN &amp; SAMBUTAN HOST</h4>
                     </div>
-                    <p class="text-sm text-on-surface-variant">The official start of the session, host presentations, and warm-up showcase.</p>
+                    <p class="text-sm text-on-surface-variant">Pembukaan resmi acara, sambutan dari host, dan penampilan pembuka.</p>
                 </div>
 
                 <!-- Timeline Dot 3 -->
@@ -152,9 +152,9 @@
                         <span class="bg-tertiary text-on-tertiary font-mono text-xs px-2 py-0.5 border-2 border-on-surface shadow-sm w-fit shrink-0">
                             {{ $event->date->copy()->addHours(2)->format('H:i') }} WIB
                         </span>
-                        <h4 class="font-headline-md text-[16px] uppercase leading-tight text-on-surface">MAIN PROGRAM SESSION</h4>
+                        <h4 class="font-headline-md text-[16px] uppercase leading-tight text-on-surface">SESI ACARA UTAMA</h4>
                     </div>
-                    <p class="text-sm text-on-surface-variant">Interactive main segment, headliner presentations, Q&amp;A session, or live sets.</p>
+                    <p class="text-sm text-on-surface-variant">Segmen utama interaktif, penampilan bintang utama, sesi tanya jawab, atau live set.</p>
                 </div>
             </div>
         </section>
@@ -163,7 +163,7 @@
         <section class="border-2 border-on-surface neubrutal-shadow bg-white p-stack-md md:p-stack-lg">
             <h2 class="font-headline-md text-headline-md mb-stack-md flex items-center gap-2 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">graphic_eq</span> 
-                FEATURED GUESTS &amp; HOSTS
+                BINTANG TAMU &amp; HOST
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-stack-md">
                 <!-- Guest 1 -->
@@ -173,7 +173,7 @@
                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgARBiu-_-fSmu2EC6a-WGOq14JZnDfL8SiuBMc9IMkgCD835I9KsZlGyddgHf_iZjKvCd1UFUojR6ytF0OzTc_XkQU1Da7NEV5o0fQ1d9QES_LpC8i7WSwyEHz6t7XZ5yB8BZy6ZGfKdiXLNcROFIzA14moQbJTPH6TvXi7-SV0kT7-KJPucotNviXn0r7uAxkbl50O7U5VADQsBY6dSLt-c9TmJn22HPXgLOX0gFvNNNeCvs1GiGtgVducWQelPVmTjZeRLK_AE"/>
                     <div>
                         <h3 class="font-bold text-sm text-on-surface uppercase">DJ NEON</h3>
-                        <p class="text-[10px] font-mono uppercase text-on-surface-variant">Special Host Set</p>
+                        <p class="text-[10px] font-mono uppercase text-on-surface-variant">Host Spesial</p>
                     </div>
                 </div>
 
@@ -184,7 +184,7 @@
                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6uQ6qPWUyotUFU-cujP3UFp7tSNl_MUSrOMHOET0dCqqeVvuYnXz0SitQYZ14e8ujOq_xmr7dAquDlcz0zBIxM6OiyKaetseWjmzjuaNDsel-GGBoNb5cpwvkwV_00NZ4-tzEP-Z5evD12VqK-IS5dnGLYLeJxrcPdYyih8CeTogfTDMWQh6VmBs-vBXjkdL56QAZC5tQ1d7vQKaQlqolW23MDZKxj-TI2ycbiQf3XKkTQybp3bPNGVAnrd3FlTcXnCy6o6zQEdI"/>
                     <div>
                         <h3 class="font-bold text-sm text-on-surface uppercase">BASS HUNTER</h3>
-                        <p class="text-[10px] font-mono uppercase text-on-surface-variant">Lead Speaker</p>
+                        <p class="text-[10px] font-mono uppercase text-on-surface-variant">Pembicara Utama</p>
                     </div>
                 </div>
 
@@ -195,7 +195,7 @@
                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuD15NSNXq0jpt_zisKjLU59EuIS-q0-3fS11E6uYCoD8JqH-pETkRD0v0URamTbFyLdZSVw8RFYKG5STBoW9xVPURYKA2qIoFQgAeEUZrvvQOUU81ckdzHv4Uxb3ATKn-ytXemJbhi_bt-72751wUQLRQFzLxqvl1_Yr0wMZErCZZAkKztWHIlfyWL7BC427TgNrbACChWWuyjuMNcdk56uGLIma_nMpXv_VwK9BswuX3WCkZWlV4NSSyucHdEp9g3YcuEiQbErOO4"/>
                     <div>
                         <h3 class="font-bold text-sm text-on-surface uppercase">JUNGLE QUEEN</h3>
-                        <p class="text-[10px] font-mono uppercase text-on-surface-variant">Featured Guest</p>
+                        <p class="text-[10px] font-mono uppercase text-on-surface-variant">Bintang Tamu</p>
                     </div>
                 </div>
             </div>
@@ -206,17 +206,17 @@
             <div class="p-stack-md md:p-stack-lg">
                 <h2 class="font-headline-md text-headline-md mb-stack-md flex items-center gap-2 uppercase tracking-wide">
                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">map</span> 
-                    VENUE &amp; DIRECTIONS
+                    LOKASI &amp; PETUNJUK ARAH
                 </h2>
                 <div class="flex flex-col lg:flex-row gap-stack-md">
                     <div class="flex-1 space-y-4">
                         <h3 class="font-headline-md text-[20px] uppercase text-on-surface">{{ $event->location }}</h3>
-                        <p class="font-body-md text-on-surface-variant">Located inside prime premium events zone. Comfortable facilities and neat neubrutalist environment.</p>
-                        <p class="font-body-md text-on-surface-variant italic">Please show your dynamic active ticket at the entrance gates.</p>
+                        <p class="font-body-md text-on-surface-variant">Berlokasi di kawasan event premium. Fasilitas nyaman dengan suasana neubrutalist yang rapi.</p>
+                        <p class="font-body-md text-on-surface-variant italic">Tunjukkan tiket aktifmu di pintu masuk.</p>
                         
                         <button onclick="window.open('https://www.google.com/maps/search/?api=1&amp;query=' + encodeURIComponent('{{ $event->location }}'), '_blank')" 
                                 class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all flex items-center gap-2 w-fit">
-                            <span class="material-symbols-outlined">directions</span> GET DIRECTIONS
+                            <span class="material-symbols-outlined">directions</span> LIHAT PETA
                         </button>
                     </div>
                     
@@ -227,7 +227,7 @@
                              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB71Mp642bUD_FZqjPbu3c2XvZbs3Nembr3qA-yGOJeZ_e7ZgwGqT47WAAiy-7LZCyTyaFGM9rqlducQWs1AqGRe8zf1183Ra7-X7MaisZs9olr7aiCk1u7W4Jcg7vKC9ZfC9PiXeSC3j66LVVam59ghJtgrIbiGG7fTilcHlAZ1xy7WRMvO-k73vNbgrColA82-3zqkzIc5RMKpSj50HNtLAvJ7iYVRsNNAupkOakiu8VShuOpgtrZq58fw5SOCssPeZxOZaLUAjc"/>
                         <div class="absolute inset-0 flex items-center justify-center">
                             <div class="bg-white border-2 border-on-surface px-4 py-2 font-label-md text-label-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
-                                MAIN ENTRANCE
+                                PINTU UTAMA
                             </div>
                         </div>
                     </div>
@@ -236,22 +236,18 @@
         </section>
 
         <!-- Related Events Section -->
-        @php
-            $relatedEvents = \App\Models\Event::where('id', '!=', $event->id)->latest()->take(3)->get();
-        @endphp
-        
         @if($relatedEvents->isNotEmpty())
             <section class="border-2 border-on-surface neubrutal-shadow bg-white p-stack-md md:p-stack-lg">
                 <h2 class="font-headline-md text-headline-md mb-stack-md flex items-center gap-2 uppercase tracking-wide">
                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">explore</span> 
-                    EXPLORE MORE EVENTS
+                    JELAJAHI EVENT LAINNYA
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md">
                     @foreach($relatedEvents as $relEvent)
                         <a href="{{ route('events.show.public', $relEvent) }}" 
                            class="group border-2 border-on-surface bg-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col overflow-hidden text-decoration-none text-inherit">
                             <div class="aspect-[16/9] w-full overflow-hidden border-b-2 border-on-surface relative">
-                                <img src="{{ $relEvent->image ? asset('storage/' . $relEvent->image) : 'https://placehold.co/600x400/56642b/ffffff?text=' . urlencode($relEvent->title) }}" 
+                                <img src="{{ $relEvent->image_url }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                      alt="{{ $relEvent->title }}">
                                 <div class="absolute top-2 right-2 bg-primary-container text-on-primary-container font-mono text-[10px] px-2 py-1 border border-on-surface shadow-sm">
@@ -274,7 +270,7 @@
                                 </div>
                                 <div class="flex items-center justify-between mt-3 pt-2 border-t border-on-surface-variant border-opacity-10 text-[10px] font-mono">
                                     <span class="truncate max-w-[120px] text-on-surface-variant">{{ $relEvent->location }}</span>
-                                    <span class="text-primary font-bold">VIEW INFO →</span>
+                                    <span class="text-primary font-bold">LIHAT INFO →</span>
                                 </div>
                             </div>
                         </a>
@@ -293,7 +289,7 @@
             
             <div class="bg-primary-container p-4 border-b-2 border-on-surface flex justify-between items-center">
                 <h3 class="font-headline-md text-[18px] text-on-primary-container uppercase tracking-wider">
-                    TICKET STUB
+                    TIKET
                 </h3>
                 <span class="material-symbols-outlined text-on-primary-container text-xl animate-bounce">local_activity</span>
             </div>
@@ -304,27 +300,27 @@
                 <!-- Price & Visual Badge -->
                 <div class="flex justify-between items-start mb-4">
                     <div>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-0.5">Standard Entry Price</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-0.5">Harga Tiket Standar</p>
                         <h4 class="font-headline-md text-2xl text-on-surface">
                             @if($event->price > 0)
                                 Rp {{ number_format($event->price, 0, ',', '.') }}
                             @else
-                                FREE ENTRY
+                                GRATIS
                             @endif
                         </h4>
                     </div>
                     
                     @if($remaining <= 0)
                         <span class="bg-error text-on-error font-label-md text-label-sm px-2.5 py-1 border-2 border-on-surface">
-                            SOLD OUT
+                            HABIS
                         </span>
                     @elseif($percentage <= 15)
                         <span class="bg-secondary-container text-on-secondary-container font-label-md text-label-sm px-2.5 py-1 border-2 border-on-surface">
-                            FEW LEFT
+                            SISA SEDIKIT
                         </span>
                     @else
                         <span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-sm px-2.5 py-1 border-2 border-on-surface">
-                            SELLING FAST
+                            CEPAT HABIS
                         </span>
                     @endif
                 </div>
@@ -332,8 +328,8 @@
                 <!-- Ticket Availability Indicator -->
                 <div class="mb-5 pb-4 border-b border-on-surface-variant border-opacity-15">
                     <div class="flex justify-between text-[11px] font-mono text-on-surface-variant mb-1.5 uppercase font-bold">
-                        <span>AVAILABILITY</span>
-                        <span>{{ $remaining }} / {{ $event->quota }} SEATS LEFT</span>
+                        <span>KETERSEDIAAN</span>
+                        <span>{{ $remaining }} / {{ $event->quota }} KURSI TERSISA</span>
                     </div>
                     <div class="w-full bg-surface-container-high border-2 border-on-surface h-3.5 neubrutal-shadow-sm overflow-hidden flex">
                         <div class="bg-primary-container h-full border-r-2 border-on-surface transition-all duration-500" 
@@ -345,15 +341,15 @@
                 <div class="space-y-3 mb-6">
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        <span class="font-bold text-sm text-on-surface-variant">Access to main stage &amp; zones</span>
+                        <span class="font-bold text-sm text-on-surface-variant">Akses ke panggung utama &amp; semua zona</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        <span class="font-bold text-sm text-on-surface-variant">Guaranteed registration slot</span>
+                        <span class="font-bold text-sm text-on-surface-variant">Slot registrasi terjamin</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        <span class="font-bold text-sm text-on-surface-variant">Digital QR-Scannable E-Ticket</span>
+                        <span class="font-bold text-sm text-on-surface-variant">E-Tiket QR yang bisa dipindai</span>
                     </div>
                 </div>
 
@@ -366,39 +362,39 @@
                 @guest
                     <a href="{{ route('login') }}" 
                        class="w-full text-center bg-primary text-on-primary font-headline-md text-[18px] py-4 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase italic block decoration-none">
-                        LOGIN TO BOOK
+                        MASUK UNTUK PESAN
                     </a>
                 @else
                     @if(Auth::user()->role === 'organizer' && Auth::id() === $event->user_id)
                         <a href="{{ route('events.edit', $event) }}" 
                            class="w-full text-center bg-secondary-container text-on-secondary-container font-headline-md text-[18px] py-4 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase italic block decoration-none">
-                            EDIT EVENT
+                            UBAH EVENT
                         </a>
                     @elseif($remaining <= 0)
                         <button disabled 
                                 class="w-full bg-surface-container-highest text-on-surface-variant font-headline-md text-[18px] py-4 border-2 border-on-surface shadow-none opacity-60 cursor-not-allowed uppercase italic">
-                            SOLD OUT
+                            HABIS
                         </button>
                     @else
                         <form action="{{ route('tickets.store', $event) }}" method="POST" class="w-full">
                             @csrf
                             <button type="submit" 
                                     class="w-full bg-primary text-on-primary font-headline-md text-[18px] py-4 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase italic">
-                                BOOK TICKET NOW
+                                PESAN TIKET SEKARANG
                             </button>
                         </form>
                     @endif
                 @endguest
 
                 <p class="text-center font-label-sm text-[10px] text-on-surface-variant mt-4 uppercase tracking-wide">
-                    NO REFUNDS • DIGITAL VALIDATION REQUIRED
+                    TANPA REFUND • WAJIB VALIDASI DIGITAL
                 </p>
             </div>
         </div>
 
         <!-- Organizer Profile Card -->
         <div class="border-2 border-on-surface p-stack-md bg-surface-container-high shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]">
-            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Event Organizer</p>
+            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Penyelenggara Event</p>
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-on-surface text-surface flex items-center justify-center font-black rounded-lg text-sm shrink-0">
                     {{ strtoupper(substr($event->user->name, 0, 2)) }}
@@ -409,7 +405,7 @@
                     </p>
                     <a class="text-primary font-label-md text-xs underline block truncate hover:text-on-primary-container" 
                        href="mailto:{{ $event->user->email }}">
-                        Contact Organizer
+                        Hubungi Penyelenggara
                     </a>
                 </div>
             </div>

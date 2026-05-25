@@ -89,11 +89,18 @@
 <!-- Shared Link Toast -->
 <div id="share-toast" class="hidden fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-primary-container text-on-primary-container border-2 border-on-surface px-6 py-3 hard-shadow font-label-md flex items-center gap-2 transition-all">
     <span class="material-symbols-outlined">share</span>
-    TICKET LINK COPIED TO CLIPBOARD!
+    LINK TIKET DISALIN KE CLIPBOARD!
 </div>
 
 <main class="flex-grow flex flex-col items-center px-margin-mobile py-stack-lg max-w-2xl mx-auto w-full gap-stack-lg">
-    
+
+    <!-- Back navigation -->
+    <a href="{{ route('tickets.index') }}"
+       class="self-start inline-flex items-center gap-2 bg-surface border-2 border-on-surface px-4 py-2 neubrutal-shadow-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all font-label-md uppercase"
+       style="text-decoration:none;">
+        <span class="material-symbols-outlined">arrow_back</span> Tiket Saya
+    </a>
+
     <!-- Success Header -->
     <div class="text-center w-full">
         @if($ticket->status === 'active')
@@ -101,30 +108,30 @@
                 <span class="material-symbols-outlined text-3xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">check_circle</span>
             </div>
             <h1 class="font-headline-lg text-headline-lg uppercase mb-stack-sm tracking-tight text-primary">
-                YOU'RE GOING TO {{ strtoupper($ticket->event->title) }}!
+                KAMU AKAN KE {{ strtoupper($ticket->event->title) }}!
             </h1>
             <p class="font-body-md text-on-surface-variant max-w-md mx-auto">
-                Order #{{ strtoupper(substr($ticket->qr_code, 0, 8)) }} confirmed. Your digital ticket is ready.
+                Pesanan #{{ strtoupper(substr($ticket->qr_code, 0, 8)) }} dikonfirmasi. Tiket digitalmu sudah siap.
             </p>
         @elseif($ticket->status === 'used')
             <div class="inline-flex items-center justify-center w-16 h-16 bg-surface-container-highest border-2 border-on-surface neubrutal-shadow rounded-full mb-stack-md">
                 <span class="material-symbols-outlined text-3xl text-on-surface" style="font-variation-settings: 'FILL' 1;">assignment_turned_in</span>
             </div>
             <h1 class="font-headline-lg text-headline-lg uppercase mb-stack-sm tracking-tight">
-                TICKET CHECKED IN
+                TIKET SUDAH CHECK-IN
             </h1>
             <p class="font-body-md text-on-surface-variant max-w-md mx-auto">
-                Ticket #{{ strtoupper(substr($ticket->qr_code, 0, 8)) }} was scanned at the entrance. Hope you have/had a blast!
+                Tiket #{{ strtoupper(substr($ticket->qr_code, 0, 8)) }} sudah dipindai di pintu masuk. Semoga harimu menyenangkan!
             </p>
         @else
             <div class="inline-flex items-center justify-center w-16 h-16 bg-error-container border-2 border-on-surface neubrutal-shadow rounded-full mb-stack-md animate-pulse">
                 <span class="material-symbols-outlined text-3xl text-on-error-container" style="font-variation-settings: 'FILL' 1;">pending</span>
             </div>
             <h1 class="font-headline-lg text-headline-lg uppercase mb-stack-sm tracking-tight text-error">
-                PAYMENT IS PENDING
+                PEMBAYARAN TERTUNDA
             </h1>
             <p class="font-body-md text-on-surface-variant max-w-md mx-auto">
-                Please complete your payment of ${{ number_format($ticket->event->price, 2) }} to activate this ticket.
+                Selesaikan pembayaran Rp {{ number_format($ticket->event->price, 0, ',', '.') }} untuk mengaktifkan tiket ini.
             </p>
         @endif
     </div>
@@ -136,10 +143,10 @@
         <div class="p-stack-md border-b-2 border-on-surface bg-primary-container flex justify-between items-center">
             <h2 class="font-label-md uppercase tracking-wider text-on-primary-container flex items-center gap-2">
                 <span class="material-symbols-outlined">confirmation_number</span>
-                {{ config('app.name', 'KARCIS') }} TICKET
+                TIKET {{ config('app.name', 'KARCIS') }}
             </h2>
             <span class="bg-on-surface text-white px-2 py-1 text-[10px] font-mono tracking-widest uppercase">
-                {{ $ticket->status }}
+                {{ ['active' => 'AKTIF', 'used' => 'TERPAKAI', 'pending' => 'MENUNGGU'][$ticket->status] ?? $ticket->status }}
             </span>
         </div>
 
@@ -147,10 +154,10 @@
             <!-- Event Image -->
             <div class="w-full md:w-40 h-36 bg-surface-container-highest border-2 border-on-surface overflow-hidden shrink-0 relative">
                 <img alt="{{ $ticket->event->title }}" class="w-full h-full object-cover transition-all duration-300 hover:scale-105" 
-                     src="{{ $ticket->event->image ? asset('storage/' . $ticket->event->image) : 'https://placehold.co/600x400/56642b/ffffff?text=Event' }}"/>
+                     src="{{ $ticket->event->image_url }}"/>
                 @if($ticket->status === 'used')
                     <div class="absolute inset-0 bg-on-surface bg-opacity-70 flex items-center justify-center">
-                        <span class="text-white font-headline-md text-xs border-2 border-white px-2 py-1 rotate-[-12deg] tracking-widest uppercase">USED</span>
+                        <span class="text-white font-headline-md text-xs border-2 border-white px-2 py-1 rotate-[-12deg] tracking-widest uppercase">TERPAKAI</span>
                     </div>
                 @endif
             </div>
@@ -164,7 +171,7 @@
                     </p>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">DATE</p>
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">TANGGAL</p>
                     <p class="font-bold text-sm text-on-surface">
                         {{ $ticket->event->date->format('M d, Y') }}
                     </p>
@@ -173,13 +180,13 @@
                     </p>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">TICKET TYPE</p>
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">JENIS TIKET</p>
                     <p class="font-bold text-sm text-on-surface">
-                        {{ $ticket->event->price > 0 ? 'General Admission' : 'Free Entry' }}
+                        {{ $ticket->event->price > 0 ? 'Tiket Reguler' : 'Gratis' }}
                     </p>
                 </div>
                 <div class="col-span-2">
-                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">LOCATION</p>
+                    <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">LOKASI</p>
                     <div class="flex items-center gap-1 mt-0.5 text-on-surface">
                         <span class="material-symbols-outlined text-sm shrink-0">location_on</span>
                         <p class="font-bold text-sm truncate">{{ $ticket->event->location }}</p>
@@ -208,7 +215,7 @@
             
             <div class="font-headline-md uppercase text-base text-on-surface flex items-center gap-1">
                 <span>TOTAL:</span>
-                <span class="text-primary font-extrabold">${{ number_format($ticket->event->price, 2) }}</span>
+                <span class="text-primary font-extrabold">Rp {{ number_format($ticket->event->price, 0, ',', '.') }}</span>
             </div>
         </div>
     </section>
@@ -221,7 +228,7 @@
                 <!-- Locked QR State -->
                 <div class="bg-white p-2 border-2 border-on-surface w-full h-full flex flex-col items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-4xl text-error animate-pulse">lock</span>
-                    <span class="font-label-sm text-[10px] uppercase text-error tracking-wider">Locked</span>
+                    <span class="font-label-sm text-[10px] uppercase text-error tracking-wider">Terkunci</span>
                 </div>
             @else
                 <!-- Active QR State -->
@@ -233,18 +240,18 @@
 
         <div class="text-center w-full px-4">
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">
-                DIGITAL TICKET SIGNATURE
+                TANDA TANGAN TIKET DIGITAL
             </p>
             <p class="font-headline-md text-sm md:text-base tracking-wider break-all text-on-surface font-mono">
                 {{ strtoupper($ticket->qr_code) }}
             </p>
             <p class="font-body-md text-xs text-on-surface-variant mt-2 max-w-sm mx-auto">
                 @if($ticket->status === 'active')
-                    Please present this screen or printed copy at check-in. The QR code is secure and unique to you.
+                    Tunjukkan layar ini atau cetakannya saat check-in. Kode QR ini aman dan unik untukmu.
                 @elseif($ticket->status === 'used')
-                    Scanned at event entrance. Checked in by {{ $ticket->user->name }}.
+                    Dipindai di pintu masuk event. Check-in oleh {{ $ticket->user->name }}.
                 @else
-                    This QR code will be generated immediately after your payment goes through.
+                    Kode QR akan dibuat otomatis setelah pembayaranmu berhasil.
                 @endif
             </p>
         </div>
@@ -257,19 +264,19 @@
             <form action="{{ route('transactions.pay', $ticket->transaction) }}" method="POST" class="flex-1">
                 @csrf
                 <button type="submit" class="w-full bg-primary text-on-primary border-2 border-on-surface font-headline-md py-4 neubrutal-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase">
-                    SIMULATE PAYMENT
+                    SIMULASIKAN PEMBAYARAN
                 </button>
             </form>
             <a href="{{ route('checkout', $ticket->transaction) }}" class="flex-1 text-center bg-secondary-container text-on-secondary-container border-2 border-on-surface font-headline-md py-4 neubrutal-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase decoration-none block">
-                GO TO CHECKOUT
+                LANJUT KE PEMBAYARAN
             </a>
         @else
             <!-- Standard E-Ticket Actions -->
             <button onclick="window.print()" class="flex-1 bg-primary-container text-on-primary-container border-2 border-on-surface font-headline-md py-4 neubrutal-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase">
-                PRINT / SAVE PDF
+                CETAK / SIMPAN PDF
             </button>
             <button onclick="shareTicket()" class="flex-1 bg-secondary-container text-on-secondary-container border-2 border-on-surface font-headline-md py-4 neubrutal-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all uppercase">
-                SHARE TICKET
+                BAGIKAN TIKET
             </button>
         @endif
     </div>
@@ -278,7 +285,7 @@
     <a class="flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface transition-colors back-link font-label-md tracking-wider uppercase decoration-none py-2" 
        href="{{ route('tickets.index') }}">
         <span class="material-symbols-outlined text-sm">arrow_back</span>
-        <span>MY TICKETS DASHBOARD</span>
+        <span>KEMBALI KE TIKET SAYA</span>
     </a>
 
 </main>

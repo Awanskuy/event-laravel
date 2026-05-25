@@ -6,18 +6,18 @@
     <section class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center min-h-[614px]">
         <div class="md:col-span-7 flex flex-col gap-stack-md">
             <div class="inline-block bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit font-label-md uppercase">
-                New Arrivals
+                Baru Rilis
             </div>
-            <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg leading-none">THE PULSE OF <span class="text-primary underline decoration-4 underline-offset-8">EVERY CITY</span></h1>
+            <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg leading-none">DENYUT NADI <span class="text-primary underline decoration-4 underline-offset-8">SETIAP KOTA</span></h1>
             <p class="font-body-lg text-body-lg max-w-xl text-on-surface-variant">
-                Discover handpicked music festivals, tech summits, and underground raves. Your gateway to high-energy experiences designed for the next generation.
+                Temukan festival musik, summit teknologi, dan acara pilihan terbaik. Gerbangmu menuju pengalaman penuh energi untuk generasi baru.
             </p>
             <div class="flex flex-wrap gap-stack-md mt-stack-sm">
                 <a href="#events" class="bg-primary-container text-on-primary-container px-stack-lg py-stack-md border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-headline-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all active:translate-x-[4px] active:translate-y-[4px] inline-block" style="text-decoration:none;">
-                    Find Your Vibe
+                    Cari Event Favoritmu
                 </a>
                 <a href="{{ route('events.create') }}" class="bg-secondary-container text-on-secondary-container px-stack-lg py-stack-md border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-headline-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all active:translate-x-[4px] active:translate-y-[4px] inline-block" style="text-decoration:none;">
-                    List Event
+                    Pasang Event
                 </a>
             </div>
         </div>
@@ -27,26 +27,35 @@
                 <img class="w-full h-full object-cover grayscale-0 group-hover:scale-105 transition-transform duration-500" alt="Vibrant hero event stage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyabBvzteWRKN7VfCDsunkmLfOa0FJKj2iwvAZpSEJWZZj4j6qItO4PtBWtF3qbHJW82RK1UuI5NyJJ3zoTaagSMomcCLcFszAicLDtts8G8KbgenlQ8QmuquDYSZQFjOO9yHIeVjK_FvX-e6FpUFDju3SEFCKw4PNLQPo2lWwlyT25SFNqkS-Ib2R4izHadbReFcNnNKDqNZwc4zSUNJ4SIWKek752MwnpqGLAZhK7uaqnuZxOF-s0jFocfI1f_79A8IUeuBJhnw"/>
             </div>
             <div class="absolute -bottom-6 -left-6 bg-tertiary-container text-on-tertiary-container p-stack-md border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hidden md:block">
-                <p class="font-label-md">LIVE EVENTS NOW</p>
+                <p class="font-label-md">EVENT AKTIF SEKARANG</p>
                 <p class="font-headline-md">{{ $events->total() ?? '1,240+' }}</p>
             </div>
         </div>
     </section>
 
     <!-- Bento Filter / Category Row -->
+    @php $activeCategory = request('category'); @endphp
     <section class="flex flex-wrap gap-stack-md" id="events">
-        <button class="flex items-center gap-2 px-4 py-2 bg-surface-container border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-            <span class="material-symbols-outlined" data-icon="music_note">music_note</span> Music
-        </button>
-        <button class="flex items-center gap-2 px-4 py-2 bg-surface-container border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-            <span class="material-symbols-outlined" data-icon="terminal">terminal</span> Tech
-        </button>
-        <button class="flex items-center gap-2 px-4 py-2 bg-surface-container border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-            <span class="material-symbols-outlined" data-icon="palette">palette</span> Art
-        </button>
-        <button class="flex items-center gap-2 px-4 py-2 bg-surface-container border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-            <span class="material-symbols-outlined" data-icon="restaurant">restaurant</span> Food
-        </button>
+        <a href="{{ route('home') }}#events"
+           class="flex items-center gap-2 px-4 py-2 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all {{ $activeCategory ? 'bg-surface-container' : 'bg-primary text-on-primary' }}">
+            <span class="material-symbols-outlined" data-icon="apps">apps</span> Semua
+        </a>
+        <a href="{{ route('home', ['category' => 'music']) }}#events"
+           class="flex items-center gap-2 px-4 py-2 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all {{ $activeCategory === 'music' ? 'bg-primary text-on-primary' : 'bg-surface-container' }}">
+            <span class="material-symbols-outlined" data-icon="music_note">music_note</span> Musik
+        </a>
+        <a href="{{ route('home', ['category' => 'tech']) }}#events"
+           class="flex items-center gap-2 px-4 py-2 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all {{ $activeCategory === 'tech' ? 'bg-primary text-on-primary' : 'bg-surface-container' }}">
+            <span class="material-symbols-outlined" data-icon="terminal">terminal</span> Teknologi
+        </a>
+        <a href="{{ route('home', ['category' => 'art']) }}#events"
+           class="flex items-center gap-2 px-4 py-2 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all {{ $activeCategory === 'art' ? 'bg-primary text-on-primary' : 'bg-surface-container' }}">
+            <span class="material-symbols-outlined" data-icon="palette">palette</span> Seni
+        </a>
+        <a href="{{ route('home', ['category' => 'food']) }}#events"
+           class="flex items-center gap-2 px-4 py-2 border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-label-md hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all {{ $activeCategory === 'food' ? 'bg-primary text-on-primary' : 'bg-surface-container' }}">
+            <span class="material-symbols-outlined" data-icon="restaurant">restaurant</span> Kuliner
+        </a>
     </section>
 
     <!-- Featured Events Grid -->
@@ -54,14 +63,8 @@
         @forelse($events ?? [] as $event)
         <div class="bg-surface border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all group">
             <div class="h-48 overflow-hidden border-b-2 border-on-surface relative">
-                @if($event->image)
-                    <img class="w-full h-full object-cover" src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}"/>
-                @else
-                    <div class="w-full h-full bg-surface-variant flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[48px] text-on-surface-variant opacity-50" data-icon="image">image</span>
-                    </div>
-                @endif
-                <div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-2 py-1 border-2 border-on-surface font-label-sm uppercase">Event</div>
+                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $event->image_url }}" alt="{{ $event->title }}"/>
+                <div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-2 py-1 border-2 border-on-surface font-label-sm uppercase">{{ $event->category_label }}</div>
             </div>
             <div class="p-stack-md flex flex-col gap-stack-sm bg-background flex-1">
                 <div class="flex justify-between items-start">
@@ -70,7 +73,7 @@
                         @if($event->price > 0)
                             <span class="font-label-md text-secondary">Rp {{ number_format($event->price, 0, ',', '.') }}</span>
                         @else
-                            <span class="font-label-md text-secondary">FREE</span>
+                            <span class="font-label-md text-secondary">GRATIS</span>
                         @endif
                     </div>
                 </div>
@@ -82,12 +85,12 @@
                     <span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
                     {{ $event->location }}
                 </div>
-                <a href="{{ route('events.show.public', $event) }}" class="mt-stack-sm w-full py-stack-sm bg-primary text-on-primary border-2 border-on-surface font-label-md uppercase active:translate-y-1 transition-all text-center block" style="text-decoration:none;">View Details</a>
+                <a href="{{ route('events.show.public', $event) }}" class="mt-stack-sm w-full py-stack-sm bg-primary text-on-primary border-2 border-on-surface font-label-md uppercase active:translate-y-1 transition-all text-center block" style="text-decoration:none;">Lihat Detail</a>
             </div>
         </div>
         @empty
             <div class="col-span-full py-12 text-center border-2 border-dashed border-on-surface bg-surface-container">
-                <p class="font-headline-md text-on-surface-variant">No events currently listed.</p>
+                <p class="font-headline-md text-on-surface-variant">Belum ada event yang terdaftar.</p>
             </div>
         @endforelse
     </section>
@@ -101,12 +104,12 @@
     <!-- Newsletter / CTA -->
     <section class="mt-stack-lg bg-primary-fixed border-2 border-on-surface shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-stack-lg flex flex-col md:flex-row items-center justify-between gap-stack-lg">
         <div class="max-w-xl">
-            <h2 class="font-display-lg text-headline-lg md:text-headline-lg uppercase mb-2">DON'T MISS THE <br class="hidden md:block"/>NEXT DROP</h2>
-            <p class="font-body-lg text-on-primary-fixed-variant">Subscribe for exclusive pre-sale access, secret venue drops, and weekly event curation.</p>
+            <h2 class="font-display-lg text-headline-lg md:text-headline-lg uppercase mb-2">JANGAN LEWATKAN <br class="hidden md:block"/>EVENT BERIKUTNYA</h2>
+            <p class="font-body-lg text-on-primary-fixed-variant">Berlangganan untuk akses pre-sale eksklusif, info venue rahasia, dan kurasi event mingguan.</p>
         </div>
         <div class="w-full md:w-auto flex flex-col md:flex-row gap-stack-sm">
-            <input class="bg-background border-2 border-on-surface p-stack-md font-label-md w-full md:w-72 outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all" placeholder="YOUR@EMAIL.COM" type="email"/>
-            <button class="bg-on-surface text-background px-stack-lg py-stack-md font-label-md border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase">Join List</button>
+            <input class="bg-background border-2 border-on-surface p-stack-md font-label-md w-full md:w-72 outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all" placeholder="EMAIL@KAMU.COM" type="email"/>
+            <button class="bg-on-surface text-background px-stack-lg py-stack-md font-label-md border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all uppercase">Gabung</button>
         </div>
     </section>
 </main>

@@ -2,24 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
-    /**
-     * PUBLIC LANDING PAGE
-     * Menampilkan semua event (Homepage)
-     */
-    public function index()
-    {
-        $events = Event::latest()->paginate(9);
-
-        return view('events.index', compact('events'));
-    }
-
     /**
      * ORGANIZER DASHBOARD
      * Event milik organizer saja
@@ -42,17 +32,9 @@ class EventController extends Controller
     /**
      * STORE EVENT
      */
-    public function store(Request $request)
+    public function store(StoreEventRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'date' => 'required|date',
-            'location' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'quota' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         // Upload Image
         if ($request->hasFile('image')) {
@@ -72,7 +54,14 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        return view('events.show', compact('event'));
+        $event->load('user');
+
+        $relatedEvents = Event::where('id', '!=', $event->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('events.show', compact('event', 'relatedEvents'));
     }
 
     /**
@@ -80,9 +69,7 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('update', $event);
 
         return view('events.edit', compact('event'));
     }
@@ -90,21 +77,11 @@ class EventController extends Controller
     /**
      * UPDATE EVENT
      */
-    public function update(Request $request, Event $event)
+    public function update(UpdateEventRequest $request, Event $event)
     {
-        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('update', $event);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'date' => 'required|date',
-            'location' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'quota' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         // Update Image
         if ($request->hasFile('image')) {
@@ -130,9 +107,7 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('delete', $event);
 
         if ($event->image) {
             Storage::disk('public')->delete($event->image);
