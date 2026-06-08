@@ -28,7 +28,7 @@ class AuthController extends Controller
             if ($user->isAdmin()) {
                 return redirect()->intended('/admin/dashboard');
             } elseif ($user->isOrganizer()) {
-                return redirect()->intended('/events');
+                return redirect()->intended(route('events.manage'));
             }
 
             return redirect()->intended('/');
@@ -63,7 +63,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         if ($user->isOrganizer()) {
-            return redirect('/events');
+            return redirect()->route('events.manage');
         }
 
         return redirect('/');
